@@ -14,6 +14,8 @@ namespace BhTree
         private BhSearchWindow _seachWindow;
         
         private Vector2 _defaultNodeSize = new Vector2(166,110);
+        
+
         public BhTreeGraph(EditorWindow editorWindow, BhSearchWindow provider)
         {
             _editorWindow = editorWindow;
