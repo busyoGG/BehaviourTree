@@ -5,7 +5,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace BhTree
+namespace BhTreeUtils
 {
     public class BhTreeGraph: GraphView
     {
@@ -13,7 +13,7 @@ namespace BhTree
 
         private BhSearchWindow _seachWindow;
         
-        private Vector2 _defaultNodeSize = new Vector2(166,110);
+        private Vector2 _defaultNodeSize = new Vector2(200,102);
         
 
         public BhTreeGraph(EditorWindow editorWindow, BhSearchWindow provider)

@@ -1,8 +1,9 @@
-﻿namespace BhTree
+﻿namespace BhTreeUtils
 {
     public enum NodeTypeEnum
     {
         Label,
-        Input
+        Input,
+        Note
     }
 }

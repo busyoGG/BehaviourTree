@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BhTree
+namespace BhTreeUtils
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class GraphNode: Attribute
