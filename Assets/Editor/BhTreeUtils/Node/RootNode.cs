@@ -20,6 +20,7 @@ namespace BhTreeUtils
                                               BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
         public string guid;
+
         /// <summary>
         /// 是否完成渲染初始化
         /// </summary>
@@ -91,15 +92,15 @@ namespace BhTreeUtils
         private bool _isSelected = false;
 
         //----- 描边颜色 ------ start
-        
+
         protected Color _selectColor = Color.red;
-        
+
         protected Color _parentColor = Color.green;
 
         protected Color _runColor = Color.green;
 
         protected Color _passColor = Color.yellow;
-        
+
         //----- 描边颜色 ------ end
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace BhTreeUtils
             lbGuid.style.top = -20;
             lbGuid.style.alignSelf = Align.Center;
             Add(lbGuid);
-            
+
             //添加输入端口
             _inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(Node));
             _inputPort.portName = "Parent";
@@ -336,16 +337,40 @@ namespace BhTreeUtils
             extensionContainer.style.height = StyleKeyword.Auto;
             // extensionContainer.style.backgroundColor = new Color(0.55f, 1.00f, 0.78f, 0.8f);
 
+            int boxCount = -1;
+            var box = new VisualElement();
+            extensionContainer.Add(box);
+
             foreach (var field in fields)
             {
                 GraphNode attr = field.GetCustomAttribute<GraphNode>();
 
                 if (attr != null)
                 {
+                    //辅助名称
+                    GName gName = field.GetCustomAttribute<GName>();
+                    string fieldName = field.Name.Replace("_", "");
+                    string subName = gName != null ? gName.GetName() : fieldName.Substring(0,1).ToUpper() + fieldName.Substring(1);
+                    
+                    //容器宽度
+                    GWidth gWidth = field.GetCustomAttribute<GWidth>();
+                    Length len = gWidth != null ? gWidth.GetLength() : new Length(96, LengthUnit.Percent);
+                    
+                    if (boxCount == 0)
+                    {
+                        box = new VisualElement();
+                        extensionContainer.Add(box);
+                    }
+
+                    if (boxCount > -1)
+                    {
+                        boxCount--;
+                    }
+
                     object value = field.GetValue(this);
 
                     VisualElement ele = new VisualElement();
-                    ele.style.width = new Length(96, LengthUnit.Percent);
+                    ele.style.width = len;
                     ele.style.marginTop = 8;
                     ele.style.alignSelf = Align.Center;
 
@@ -375,7 +400,7 @@ namespace BhTreeUtils
 
                             foreLabel = new Label();
                             foreLabel.style.fontSize = _fontSize;
-                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            foreLabel.text = subName;
                             ele.Add(foreLabel);
 
                             TextField text = new TextField();
@@ -449,7 +474,7 @@ namespace BhTreeUtils
 
                             foreLabel = new Label();
                             foreLabel.style.fontSize = _fontSize;
-                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            foreLabel.text = subName;
                             ele.Add(foreLabel);
 
                             EnumField enumField = new EnumField(value as Enum);
@@ -465,10 +490,10 @@ namespace BhTreeUtils
 
                             foreLabel = new Label();
                             foreLabel.style.fontSize = _fontSize;
-                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            foreLabel.text = subName;
                             ele.Add(foreLabel);
 
-                            bool isInt = extra[1] == "Int";
+                            bool isInt = extra[0] == "Int";
 
                             Label num = new Label();
                             num.style.fontSize = _fontSize;
@@ -477,7 +502,7 @@ namespace BhTreeUtils
 
                             if (isInt)
                             {
-                                SliderInt slider = new SliderInt(int.Parse(extra[2]), int.Parse(extra[3]));
+                                SliderInt slider = new SliderInt(int.Parse(extra[1]), int.Parse(extra[2]));
 
                                 num.text = extra[2];
 
@@ -494,7 +519,7 @@ namespace BhTreeUtils
                             }
                             else
                             {
-                                Slider slider = new Slider(float.Parse(extra[1]), float.Parse(extra[2]));
+                                Slider slider = new Slider(float.Parse(extra[0]), float.Parse(extra[1]));
 
                                 num.text = extra[1];
 
@@ -516,6 +541,7 @@ namespace BhTreeUtils
                         case NodeTypeEnum.Radio:
 
                             RadioButtonGroup radioButtonGroup = new RadioButtonGroup();
+                            radioButtonGroup.value = 0;
                             
                             ele.Add(radioButtonGroup);
 
@@ -523,41 +549,73 @@ namespace BhTreeUtils
                             {
                                 RadioButton radio = new RadioButton();
                                 radio.Children().FirstOrDefault().style.flexGrow = 0;
-                                
+
                                 Label lbRadio = new Label();
                                 lbRadio.style.fontSize = _fontSize;
                                 lbRadio.text = selection;
                                 radio.Add(lbRadio);
-                                
+
                                 radioButtonGroup.Add(radio);
                             }
-                            
-                            radioButtonGroup.RegisterValueChangedCallback(evt =>
-                            {
-                                setValue(this, evt.newValue);
-                            });
+
+                            radioButtonGroup.RegisterValueChangedCallback(evt => { setValue(this, evt.newValue); });
                             break;
                         case NodeTypeEnum.Toggle:
-                            
+
                             Toggle toggle = new Toggle();
+                            toggle.style.width = StyleKeyword.Auto;
                             toggle.Children().FirstOrDefault().style.flexGrow = 0;
-                            
-                            toggle.RegisterValueChangedCallback(evt =>
-                            {
-                                setValue(this, evt.newValue);
-                            });
-                            
+
+                            toggle.RegisterValueChangedCallback(evt => { setValue(this, evt.newValue); });
+
                             ele.Add(toggle);
-                            
+
                             foreLabel = new Label();
                             foreLabel.style.fontSize = _fontSize;
-                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            foreLabel.text = subName;
                             toggle.Add(foreLabel);
-                            
+
+                            break;
+                        case NodeTypeEnum.Box:
+
+                            if (extra[0] != "")
+                            {
+                                foreLabel = new Label();
+                                foreLabel.style.fontSize = _fontSize * 0.8f;
+                                foreLabel.text = subName;
+                                ele.Add(foreLabel);
+                            }
+
+                            Color color = Color.yellow;
+                            GColor gColor = field.GetCustomAttribute<GColor>();
+
+                            if (gColor != null)
+                            {
+                                color = gColor.GetColor();
+                            }
+
+                            box = new VisualElement();
+                            box.style.backgroundColor = color;
+                            box.style.marginTop = 8;
+                            box.style.width = new Length(96, LengthUnit.Percent);
+                            box.style.alignSelf = Align.Center;
+                            box.style.borderBottomLeftRadius = 5;
+                            box.style.borderBottomRightRadius = 5;
+                            box.style.borderTopLeftRadius = 5;
+                            box.style.borderTopRightRadius = 5;
+                            box.style.flexDirection = extra.Length > 1 && extra[1] == "Column"
+                                ? FlexDirection.Column
+                                : FlexDirection.Row;
+                            box.style.flexWrap = Wrap.Wrap;
+
+                            extensionContainer.Add(box);
+
+                            boxCount = int.Parse(extra[0]);
+
                             break;
                     }
 
-                    extensionContainer.Add(ele);
+                    box.Add(ele);
                 }
             }
         }
@@ -572,7 +630,7 @@ namespace BhTreeUtils
             style.height = size.y;
             if (_isBordered)
             {
-                _curSize = size - new Vector2(_borderOffset,_borderOffset);
+                _curSize = size - new Vector2(_borderOffset, _borderOffset);
             }
             else
             {
@@ -628,9 +686,9 @@ namespace BhTreeUtils
                     style.width = _curSize.x + _borderOffset;
                     style.height = _curSize.y + _borderOffset;
                 }
-                
-                _defPos = new Vector2(style.left.value.value,style.top.value.value);
-                
+
+                _defPos = new Vector2(style.left.value.value, style.top.value.value);
+
                 style.left = _defPos.x - _borderOffset * 0.5f;
                 style.top = _defPos.y - _borderOffset * 0.5f;
             }
@@ -646,6 +704,7 @@ namespace BhTreeUtils
                     style.width = _curSize.x;
                     style.height = _curSize.y;
                 }
+
                 style.left = _defPos.x;
                 style.top = _defPos.y;
             }

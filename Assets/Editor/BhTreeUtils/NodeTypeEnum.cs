@@ -11,5 +11,6 @@
         Slide,
         Toggle,
         Radio,
+        Box
     }
 }
