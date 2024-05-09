@@ -17,17 +17,17 @@ namespace BhTreeUtils
 
         private RootNode _clickNode;
 
-        
+
         /// <summary>
         /// 是否在选择
         /// </summary>
         private bool _isSelect = false;
-
+        
         /// <summary>
         /// 鼠标是否按下
         /// </summary>
         private bool _isDown = false;
-        
+
         /// <summary>
         /// 鼠标是否移动了
         /// </summary>
@@ -78,9 +78,12 @@ namespace BhTreeUtils
 
             RegisterCallback<PointerDownEvent>(evt =>
             {
-                _isDown = true;
+                if (evt.button == 0)
+                {
+                    _isDown = true;
+                }
             });
-            
+
             RegisterCallback<PointerMoveEvent>(evt =>
             {
                 if (_isDown)
@@ -108,7 +111,8 @@ namespace BhTreeUtils
                     }
                     else
                     {
-                        while (currentSelection != null && currentSelection is not RootNode)
+                        while (currentSelection != null && currentSelection is not RootNode &&
+                               !IsInputField(currentSelection))
                         {
                             currentSelection = currentSelection.parent;
                         }
@@ -123,14 +127,21 @@ namespace BhTreeUtils
                         }
                         else
                         {
-                            if (_clickNode != null)
+                            while (currentSelection != null && currentSelection is not RootNode)
+                            {
+                                currentSelection = currentSelection.parent;
+                            }
+                            
+                            if (currentSelection == null || _clickNode != null && currentSelection != _clickNode)
                             {
                                 _clickNode.UnSelected();
                                 _clickNode = null;
                             }
-
-                            _clickNode = currentSelection as RootNode;
-                            _clickNode?.Selected();
+                            else
+                            {
+                                _clickNode = currentSelection as RootNode;
+                                _clickNode?.Selected();
+                            }
                         }
                     }
                 }
@@ -176,6 +187,12 @@ namespace BhTreeUtils
             edge?.output.Connect(edge);
             AddElement(edge);
             return edge;
+        }
+
+        bool IsInputField(VisualElement element)
+        {
+            // 判断元素是否是BaseField<T>或其派生类的实例
+            return element.GetType().BaseType.IsGenericType;
         }
     }
 }

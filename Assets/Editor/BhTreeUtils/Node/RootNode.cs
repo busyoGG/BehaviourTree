@@ -34,6 +34,11 @@ namespace BhTreeUtils
         private Vector2 _defSize;
 
         /// <summary>
+        /// 当前尺寸
+        /// </summary>
+        private Vector2 _curSize;
+
+        /// <summary>
         /// 默认高度
         /// </summary>
         private float _defHeight;
@@ -52,6 +57,11 @@ namespace BhTreeUtils
         /// 是否正在调整大小
         /// </summary>
         private bool _isResizing = false;
+
+        /// <summary>
+        /// 是否已描边
+        /// </summary>
+        private bool _isBordered = false;
 
         /// <summary>
         /// 默认字体尺寸
@@ -98,7 +108,7 @@ namespace BhTreeUtils
             Debug.Log("创建完成，开始渲染  " + layout.size);
             _defHeight = titleContainer.layout.height + _outputPort.layout.height;
             _defWidth = titleContainer.layout.width;
-            
+
             Init();
             schedule.Execute(() =>
             {
@@ -110,7 +120,6 @@ namespace BhTreeUtils
             RefreshPorts();
 
             UnregisterCallback<GeometryChangedEvent>(OnEnable);
-            
         }
 
         public void SetSize(Vector2 size)
@@ -126,7 +135,7 @@ namespace BhTreeUtils
             _graph.RegisterCallback<MouseMoveEvent>(ResizeMove);
             _graph.RegisterCallback<MouseUpEvent>(ResizeEnd);
         }
-        
+
         /// <summary>
         /// 设置运行状态，请在执行到该节点时调用
         /// </summary>
@@ -192,6 +201,7 @@ namespace BhTreeUtils
 
         public void UnSelected()
         {
+            Debug.Log("不描边");
             SetBorder(Color.red, 0);
             //遍历节点
             var connections = _inputPort.connections;
@@ -225,7 +235,7 @@ namespace BhTreeUtils
 
             if (_inited)
             {
-                UpdateNodeSize();
+                UpdateBorderSize();
             }
         }
 
@@ -250,8 +260,7 @@ namespace BhTreeUtils
                 Vector2 newSize = evt.mousePosition - _mouseOffset;
                 newSize = Vector2.Max(_defSize, newSize);
                 // 更新节点的大小
-                style.width = newSize.x;
-                style.height = newSize.y;
+                UpdateSize(newSize);
 
                 evt.StopPropagation();
             }
@@ -270,8 +279,8 @@ namespace BhTreeUtils
         private bool IsResizeArea(Vector2 position)
         {
             // 根据需要定义resizer区域，这里以右下角为例
-            return position.x >= layout.width - 10f &&
-                   position.y >= layout.height - 10f;
+            return position.x >= layout.width - 10f - _borderOffset &&
+                   position.y >= layout.height - 10f - _borderOffset;
         }
 
         private void Init()
@@ -311,6 +320,8 @@ namespace BhTreeUtils
                     ele.style.marginTop = 8;
                     ele.style.alignSelf = Align.Center;
 
+                    Label foreLabel;
+
                     if (attr.Type() != NodeTypeEnum.Note)
                     {
                         ele.style.borderBottomColor = Color.white;
@@ -333,10 +344,10 @@ namespace BhTreeUtils
                         case NodeTypeEnum.Input:
                             ele.style.flexDirection = FlexDirection.Row;
 
-                            Label inputLabel = new Label();
-                            inputLabel.style.fontSize = _fontSize;
-                            inputLabel.text = extra.Length > 0 ? extra[0] : field.Name;
-                            ele.Add(inputLabel);
+                            foreLabel = new Label();
+                            foreLabel.style.fontSize = _fontSize;
+                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            ele.Add(foreLabel);
 
                             TextField text = new TextField();
                             text.style.flexGrow = 1;
@@ -385,9 +396,6 @@ namespace BhTreeUtils
                                 fontChild = child.Children().FirstOrDefault().Children().FirstOrDefault();
                                 fontChild.style.fontSize = _fontSize;
 
-
-                                // note.style.backgroundImage = null;
-                                // note.style.backgroundColor = null;
                                 note.RegisterValueChangedCallback((evt) => { setValue(this, evt.newValue); });
 
                                 note.RegisterCallback<FocusOutEvent>(evt => { UpdateNodeSize(); });
@@ -407,6 +415,75 @@ namespace BhTreeUtils
                             }
 
                             break;
+                        case NodeTypeEnum.Enum:
+                            ele.style.flexDirection = FlexDirection.Row;
+
+                            foreLabel = new Label();
+                            foreLabel.style.fontSize = _fontSize;
+                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            ele.Add(foreLabel);
+
+                            EnumField enumField = new EnumField(value as Enum);
+                            enumField.style.flexGrow = 1;
+
+                            enumField.RegisterValueChangedCallback(evt => setValue(this, evt.newValue));
+
+                            ele.Add(enumField);
+                            break;
+
+                        case NodeTypeEnum.Slide:
+                            ele.style.flexDirection = FlexDirection.Row;
+
+                            foreLabel = new Label();
+                            foreLabel.style.fontSize = _fontSize;
+                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            ele.Add(foreLabel);
+
+                            bool isInt = extra[1] == "Int";
+
+                            Label num = new Label();
+                            num.style.fontSize = _fontSize;
+                            num.style.width = _fontSize * 3;
+                            num.style.unityTextAlign = TextAnchor.MiddleRight;
+
+                            if (isInt)
+                            {
+                                SliderInt slider = new SliderInt(int.Parse(extra[2]), int.Parse(extra[3]));
+
+                                num.text = extra[2];
+
+                                slider.value = 0;
+                                slider.style.flexGrow = 1;
+
+                                slider.RegisterValueChangedCallback(evt =>
+                                {
+                                    setValue(this, evt.newValue);
+                                    num.text = evt.newValue.ToString();
+                                });
+
+                                ele.Add(slider);
+                            }
+                            else
+                            {
+                                Slider slider = new Slider(float.Parse(extra[1]), float.Parse(extra[2]));
+
+                                num.text = extra[1];
+
+                                slider.value = 0;
+                                slider.style.flexGrow = 1;
+
+                                slider.RegisterValueChangedCallback(evt =>
+                                {
+                                    setValue(this, evt.newValue);
+                                    num.text = evt.newValue.ToString();
+                                });
+
+                                ele.Add(slider);
+                            }
+
+                            ele.Add(num);
+
+                            break;
                     }
 
                     extensionContainer.Add(ele);
@@ -414,15 +491,91 @@ namespace BhTreeUtils
             }
         }
 
-        private void UpdateNodeSize()
+        /// <summary>
+        /// 刷新尺寸
+        /// </summary>
+        /// <param name="size"></param>
+        private void UpdateSize(Vector2 size)
         {
-            // 计算内容的总高度
-            float contentHeight = _defHeight + extensionContainer.layout.height + 10 + _borderOffset;
-
-            // 设置 Node 的新高度
-            SetSize(new Vector2(_defWidth + _borderOffset, contentHeight));
+            style.width = size.x;
+            style.height = size.y;
+            if (_isBordered)
+            {
+                _curSize = size - new Vector2(_borderOffset,_borderOffset);
+            }
+            else
+            {
+                _curSize = size;
+            }
         }
 
+        /// <summary>
+        /// 更新节点尺寸
+        /// </summary>
+        private void UpdateNodeSize()
+        {
+            //未手动调整过大小才自动更新
+            if (_curSize.Equals(Vector2.zero))
+            {
+                // 计算内容的总高度
+                float contentHeight = _defHeight + extensionContainer.layout.height + 10;
+
+                // 设置 Node 的新高度
+                SetSize(new Vector2(_defWidth, contentHeight));
+                Bordered();
+            }
+        }
+
+        /// <summary>
+        /// 更新带描边的节点尺寸
+        /// </summary>
+        private void UpdateBorderSize()
+        {
+            if (_borderOffset == 0)
+            {
+                _isBordered = false;
+                Bordered();
+            }
+            else if (!_isBordered)
+            {
+                _isBordered = true;
+                Bordered();
+            }
+        }
+
+        private void Bordered()
+        {
+            if (_isBordered)
+            {
+                if (_curSize.Equals(Vector2.zero))
+                {
+                    style.width = _defSize.x + _borderOffset;
+                    style.height = _defSize.y + _borderOffset;
+                }
+                else
+                {
+                    style.width = _curSize.x + _borderOffset;
+                    style.height = _curSize.y + _borderOffset;
+                }
+            }
+            else
+            {
+                if (_curSize.Equals(Vector2.zero))
+                {
+                    style.width = _defSize.x;
+                    style.height = _defSize.y;
+                }
+                else
+                {
+                    style.width = _curSize.x;
+                    style.height = _curSize.y;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 初始化配置
+        /// </summary>
         protected virtual void InitConfig()
         {
             title = "默认节点";

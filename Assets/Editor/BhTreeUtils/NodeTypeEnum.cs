@@ -4,6 +4,10 @@
     {
         Label,
         Input,
-        Note
+        Note,
+        Enum,
+        Color,
+        Texture,
+        Slide
     }
 }
