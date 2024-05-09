@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 public class LayoutGenerator
 {
     /// <summary>
-    /// 生成水平布局
+    /// 鐢熸垚姘村钩甯冨眬
     /// </summary>
     /// <param name="isStart"></param>
     /// <returns></returns>
@@ -26,7 +26,7 @@ public class LayoutGenerator
     }
 
     /// <summary>
-    /// 生成竖直布局
+    /// 鐢熸垚绔栫洿甯冨眬
     /// </summary>
     /// <param name="isStart"></param>
     /// <returns></returns>
@@ -42,7 +42,7 @@ public class LayoutGenerator
     }
 
     /// <summary>
-    /// 生成折叠
+    /// 鐢熸垚鎶樺彔
     /// </summary>
     /// <param name="isStart"></param>
     /// <returns></returns>
@@ -62,7 +62,7 @@ public class LayoutGenerator
 
 
     /// <summary>
-    /// 生成列表
+    /// 鐢熸垚鍒楄〃
     /// </summary>
     /// <param name="isStart"></param>
     /// <param name="elList"></param>
@@ -118,7 +118,7 @@ public class LayoutGenerator
     }
 
     /// <summary>
-    /// 计算Size
+    /// 璁＄畻Size
     /// </summary>
     /// <param name="percent"></param>
     /// <param name="vec2Size"></param>

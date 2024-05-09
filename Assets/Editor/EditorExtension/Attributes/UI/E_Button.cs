@@ -2,7 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 
 /// <summary>
-/// °´Å¥ ²ÎÊıname£º°´Å¥Ãû³Æ
+/// æŒ‰é’® å‚æ•°nameï¼šæŒ‰é’®åç§°
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
 public class E_Button : EBase

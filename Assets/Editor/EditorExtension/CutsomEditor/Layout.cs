@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[EName("UI²¼¾Ö")]
+[EName("UIå¸ƒå±€")]
 public class Layout : BaseEditor<Layout>
 {
     [MenuItem("Test/Layout")]
@@ -25,7 +25,7 @@ public class Layout : BaseEditor<Layout>
     [E_Texture, ES_Size(70, 70), EL_Vertical(false)]
     public Texture vertical3;
 
-    [E_Texture, ES_Size(70, 70), EL_Foldout(true, "ÕÛµş")]
+    [E_Texture, ES_Size(70, 70), EL_Foldout(true, "æŠ˜å ")]
     public Texture foldout1;
     [E_Texture, ES_Size(70, 70), EL_Foldout(false)]
     public Texture foldout2;

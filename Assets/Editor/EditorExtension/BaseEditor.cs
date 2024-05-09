@@ -26,14 +26,14 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     {
         if (_isInited) return;
 
-        //»ñµÃÀàĞÍ
+        //è·å¾—ç±»å‹
         _type = GetType();
 
-        //³õÊ¼»¯´°¿ÚÃû³Æ
+        //åˆå§‹åŒ–çª—å£åç§°
         EName ename = _type.GetCustomAttribute<EName>();
         InitWindow(ename.GetName());
 
-        //³õÊ¼»¯UI
+        //åˆå§‹åŒ–UI
         Init();
     }
 
@@ -53,7 +53,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     {
         _root = new LayoutNode();
 
-        //É¸Ñ¡°üº¬±à¼­Æ÷ÍØÕ¹ÀàĞÍ»ùÀàµÄ¶ÔÏó
+        //ç­›é€‰åŒ…å«ç¼–è¾‘å™¨æ‹“å±•ç±»å‹åŸºç±»çš„å¯¹è±¡
         var members = _type.GetMembers(_flag)
                             .Select(m => new
                             {
@@ -64,7 +64,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
                             .OrderBy(x => x.Attribute.lineNum);
 
         LayoutNode node = _root;
-        //±éÀú¶ÔÏó£¬´´½¨Éú³Éº¯Êı
+        //éå†å¯¹è±¡ï¼Œåˆ›å»ºç”Ÿæˆå‡½æ•°
         foreach (var item in members)
         {
             MemberInfo member = item.Member;
@@ -76,7 +76,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
             //object layout = null;
             List<object> layouts = new List<object>();
 
-            //±éÀúËùÓĞÌØĞÔ£¬·Ö×°µ½ÑùÊ½ºÍuiºÍ²¼¾Ö
+            //éå†æ‰€æœ‰ç‰¹æ€§ï¼Œåˆ†è£…åˆ°æ ·å¼å’Œuiå’Œå¸ƒå±€
             foreach (var prop in propAttrs)
             {
                 Type attrType = prop.GetType();
@@ -128,14 +128,14 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
             }
 
 
-            //¶¨ÒåNameºÍGetVal
+            //å®šä¹‰Nameå’ŒGetVal
             Func<object> getVal;
 
             bool isField = member.MemberType == MemberTypes.Field;
 
             FieldInfo field = member as FieldInfo;
 
-            //ÅĞ¶ÏÊı¾İÀàĞÍÊÇ·ñList
+            //åˆ¤æ–­æ•°æ®ç±»å‹æ˜¯å¦List
             bool isList = isField && field.FieldType.Name.IndexOf("List") != -1;
 
             if (isList)
@@ -209,7 +209,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
 
 
     /// <summary>
-    /// ÉèÖÃÑùÊ½»æÖÆº¯Êı
+    /// è®¾ç½®æ ·å¼ç»˜åˆ¶å‡½æ•°
     /// </summary>
     /// <param name="ui"></param>
     /// <param name="styles"></param>
@@ -224,7 +224,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
 
             if (styles != null)
             {
-                //´´½¨GUIStyle
+                //åˆ›å»ºGUIStyle
                 foreach (var style in styles)
                 {
                     //switch (style)
@@ -241,7 +241,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// ÉèÖÃGUILayout
+    /// è®¾ç½®GUILayout
     /// </summary>
     /// <param name="ui"></param>
     /// <param name="styles"></param>
@@ -255,7 +255,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
             List<GUILayoutOption> options = new List<GUILayoutOption>();
             if (styles != null)
             {
-                //´´½¨GUILayoutOption
+                //åˆ›å»ºGUILayoutOption
                 foreach (var style in styles)
                 {
                     switch (style)
@@ -281,7 +281,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// ÉèÖÃ²¼¾Ö
+    /// è®¾ç½®å¸ƒå±€
     /// </summary>
     /// <param name="layout"></param>
     /// <param name="node"></param>
@@ -306,7 +306,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// ÉèÖÃUI
+    /// è®¾ç½®UI
     /// </summary>
     /// <param name="member"></param>
     /// <param name="ui"></param>
@@ -317,10 +317,10 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     private UIListData SetUI(MemberInfo member, object ui, List<object> styles, string propName, Func<object> getVal)
     {
         UIListData list = new UIListData();
-        //´´½¨ui
+        //åˆ›å»ºui
         if (member.MemberType == MemberTypes.Field)
         {
-            //×Ö¶Î
+            //å­—æ®µ
             Action<GUIStyle, GUILayoutOption[]> action = null;
 
             object val = getVal();
@@ -351,7 +351,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
         }
         else if (member.MemberType == MemberTypes.Method)
         {
-            //·½·¨
+            //æ–¹æ³•
             Action<GUIStyle, GUILayoutOption[]> action = null;
             switch (ui)
             {
@@ -369,7 +369,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// ¸ù¾İGUIStyle´´½¨Ò»¸öĞÂµÄGUIStyle
+    /// æ ¹æ®GUIStyleåˆ›å»ºä¸€ä¸ªæ–°çš„GUIStyle
     /// </summary>
     /// <param name="ui"></param>
     /// <returns></returns>
@@ -400,7 +400,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// ÆÕÍ¨äÖÈ¾
+    /// æ™®é€šæ¸²æŸ“
     /// </summary>
     /// <param name="node"></param>
     /// <returns></returns>
@@ -426,7 +426,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
     }
 
     /// <summary>
-    /// Á÷Ê½äÖÈ¾
+    /// æµå¼æ¸²æŸ“
     /// </summary>
     /// <param name="node"></param>
     /// <param name="member"></param>
@@ -441,7 +441,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
                 int index = i;
 
                 float space = 6;
-                //ÓÉÓÚÄÑÒÔÕıÈ·»ñÈ¡ÁĞ±í¶ÔÏó´óĞ¡£¬Òò´ËÇëÊÖ¶¯´«Èë
+                //ç”±äºéš¾ä»¥æ­£ç¡®è·å–åˆ—è¡¨å¯¹è±¡å¤§å°ï¼Œå› æ­¤è¯·æ‰‹åŠ¨ä¼ å…¥
                 ES_Size size = member.GetAttribute<ES_Size>();
                 ESPercent percent = size.GetSizeType();
                 Vector2 vec2Size = size.GetSize();

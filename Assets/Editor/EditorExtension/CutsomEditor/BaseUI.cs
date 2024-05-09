@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[EName("基础UI")]
+[EName("鍩虹UI")]
 public class BaseUI : BaseEditor<BaseUI>
 {
     [MenuItem("Test/BaseUI")]
@@ -11,7 +11,7 @@ public class BaseUI : BaseEditor<BaseUI>
     }
 
     [E_Label]
-    public string label = "Label样式";
+    public string label = "Label鏍峰紡";
 
     [E_Input]
     public string defInput;
@@ -22,7 +22,7 @@ public class BaseUI : BaseEditor<BaseUI>
     [E_Texture]
     public Texture texture;
 
-    [E_Button("按钮")]
+    [E_Button("鎸夐挳")]
     public void Button()
     {
 

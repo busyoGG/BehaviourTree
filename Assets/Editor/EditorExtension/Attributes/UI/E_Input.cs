@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 using System;
 
 /// <summary>
-/// ÊäÈë¿ò ²ÎÊıwidth£ºKeyÃû×Ö¿í¶È£»²ÎÊıisPercent£ºÊÇ·ñ°Ù·Ö±È¿í¶È£»²ÎÊıisDoubleLine£ºÊÇ·ñ·ÖÁ½ĞĞÏÔÊ¾
+/// è¾“å…¥æ¡† å‚æ•°widthï¼šKeyåå­—å®½åº¦ï¼›å‚æ•°isPercentï¼šæ˜¯å¦ç™¾åˆ†æ¯”å®½åº¦ï¼›å‚æ•°isDoubleLineï¼šæ˜¯å¦åˆ†ä¸¤è¡Œæ˜¾ç¤º
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
 public class E_Input : EBase

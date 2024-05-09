@@ -19,62 +19,72 @@ namespace BhTreeUtils
                                               BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
         /// <summary>
-        /// ÊÇ·ñÍê³ÉäÖÈ¾³õÊ¼»¯
+        /// æ˜¯å¦å®Œæˆæ¸²æŸ“åˆå§‹åŒ–
         /// </summary>
         private bool _inited = false;
 
         /// <summary>
-        /// µ±Ç°ÀàÀàĞÍ
+        /// å½“å‰ç±»ç±»å‹
         /// </summary>
         private Type _type;
 
         /// <summary>
-        /// Ä¬ÈÏ³ß´ç
+        /// é»˜è®¤å°ºå¯¸
         /// </summary>
         private Vector2 _defSize;
 
         /// <summary>
-        /// Ä¬ÈÏ¸ß¶È
+        /// é»˜è®¤é«˜åº¦
         /// </summary>
         private float _defHeight;
 
         /// <summary>
-        /// Êó±ê°´ÏÂÊ±×ø±ê
+        /// é»˜è®¤å®½åº¦
+        /// </summary>
+        private float _defWidth;
+
+        /// <summary>
+        /// é¼ æ ‡æŒ‰ä¸‹æ—¶åæ ‡
         /// </summary>
         private Vector2 _mouseOffset;
 
         /// <summary>
-        /// ÊÇ·ñÕıÔÚµ÷Õû´óĞ¡
+        /// æ˜¯å¦æ­£åœ¨è°ƒæ•´å¤§å°
         /// </summary>
         private bool _isResizing = false;
 
         /// <summary>
-        /// Ä¬ÈÏ×ÖÌå³ß´ç
+        /// é»˜è®¤å­—ä½“å°ºå¯¸
         /// </summary>
         private int _fontSize = 16;
 
         /// <summary>
-        /// Ãè±ß²¹Õı
+        /// æè¾¹è¡¥æ­£
         /// </summary>
         private float _borderOffset = 0;
 
         /// <summary>
-        /// ÊÇ·ñÖ´ĞĞµ½µ±Ç°½Úµã
+        /// æ˜¯å¦æ‰§è¡Œåˆ°å½“å‰èŠ‚ç‚¹
         /// </summary>
         private bool _isRun = false;
 
         /// <summary>
-        /// ½ÚµãÀàĞÍ
+        /// æ˜¯å¦é€‰ä¸­å½“å‰èŠ‚ç‚¹
+        /// </summary>
+        private bool _isSelected = false;
+
+        /// <summary>
+        /// èŠ‚ç‚¹ç±»å‹
         /// </summary>
         protected string _NodeType = "None";
 
         public RootNode()
         {
-            //Ìí¼ÓÊäÈë¶Ë¿Ú
+            //æ·»åŠ è¾“å…¥ç«¯å£
             _inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(Node));
             _inputPort.portName = "Parent";
             inputContainer.Add(_inputPort);
-            //Ìí¼ÓÊä³ö¶Ë¿Ú
+            //æ·»åŠ è¾“å‡ºç«¯å£
             _outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(Node));
             _outputPort.portName = "Child";
             outputContainer.Add(_outputPort);
@@ -85,20 +95,22 @@ namespace BhTreeUtils
 
         private void OnEnable(GeometryChangedEvent evt)
         {
-            Debug.Log("´´½¨Íê³É£¬¿ªÊ¼äÖÈ¾  " + layout.size);
+            Debug.Log("åˆ›å»ºå®Œæˆï¼Œå¼€å§‹æ¸²æŸ“  " + layout.size);
             _defHeight = titleContainer.layout.height + _outputPort.layout.height;
-            Debug.Log("Ä¬ÈÏ¸ß¶È " + _defHeight);
+            _defWidth = titleContainer.layout.width;
+            
             Init();
             schedule.Execute(() =>
             {
                 UpdateNodeSize();
                 _inited = true;
             }).StartingIn(1);
-            //Ë¢ĞÂ ²»È»»áÓĞÏÔÊ¾BUG
+            //åˆ·æ–° ä¸ç„¶ä¼šæœ‰æ˜¾ç¤ºBUG
             RefreshExpandedState();
             RefreshPorts();
 
             UnregisterCallback<GeometryChangedEvent>(OnEnable);
+            
         }
 
         public void SetSize(Vector2 size)
@@ -114,9 +126,9 @@ namespace BhTreeUtils
             _graph.RegisterCallback<MouseMoveEvent>(ResizeMove);
             _graph.RegisterCallback<MouseUpEvent>(ResizeEnd);
         }
-
+        
         /// <summary>
-        /// ÉèÖÃÔËĞĞ×´Ì¬£¬ÇëÔÚÖ´ĞĞµ½¸Ã½ÚµãÊ±µ÷ÓÃ
+        /// è®¾ç½®è¿è¡ŒçŠ¶æ€ï¼Œè¯·åœ¨æ‰§è¡Œåˆ°è¯¥èŠ‚ç‚¹æ—¶è°ƒç”¨
         /// </summary>
         /// <param name="run"></param>
         public void SetRun(bool run)
@@ -142,14 +154,14 @@ namespace BhTreeUtils
         }
 
         /// <summary>
-        /// Çå³ıËùÓĞÔËĞĞ×´Ì¬
+        /// æ¸…é™¤æ‰€æœ‰è¿è¡ŒçŠ¶æ€
         /// </summary>
         public void ClearRunState()
         {
-            //Ö´ĞĞÁ½´ÎÈ·±£ÍêÈ«Çå³ı
+            //æ‰§è¡Œä¸¤æ¬¡ç¡®ä¿å®Œå…¨æ¸…é™¤
             SetRun(false);
             SetRun(false);
-            //±éÀú½Úµã
+            //éå†èŠ‚ç‚¹
             var connections = _outputPort.connections;
             foreach (var edge in connections)
             {
@@ -158,8 +170,40 @@ namespace BhTreeUtils
             }
         }
 
+        public void Selected(RootNode leaf = null)
+        {
+            if (leaf == null)
+            {
+                SetBorder(Color.red, 5);
+            }
+            else
+            {
+                SetBorder(Color.green, 5);
+            }
+
+            //éå†èŠ‚ç‚¹
+            var connections = _inputPort.connections;
+            foreach (var edge in connections)
+            {
+                RootNode node = edge.output.node as RootNode;
+                node?.Selected(node);
+            }
+        }
+
+        public void UnSelected()
+        {
+            SetBorder(Color.red, 0);
+            //éå†èŠ‚ç‚¹
+            var connections = _inputPort.connections;
+            foreach (var edge in connections)
+            {
+                RootNode node = edge.output.node as RootNode;
+                node?.UnSelected();
+            }
+        }
+
         /// <summary>
-        /// ÉèÖÃÃè±ßÑÕÉ«£¬×îºÃÊÇÔÚËùÓĞ³õÊ¼»¯Íê³ÉºóÔÙµ÷ÓÃ
+        /// è®¾ç½®æè¾¹é¢œè‰²ï¼Œæœ€å¥½æ˜¯åœ¨æ‰€æœ‰åˆå§‹åŒ–å®Œæˆåå†è°ƒç”¨
         /// </summary>
         /// <param name="color"></param>
         private void SetBorder(Color color, float width)
@@ -187,11 +231,15 @@ namespace BhTreeUtils
 
         private void ResizeStart(MouseDownEvent evt)
         {
-            if (evt.button == 0 && IsResizeArea(evt.localMousePosition))
+            if (evt.button == 0)
             {
-                _mouseOffset = evt.mousePosition - layout.size;
-                _isResizing = true;
-                evt.StopPropagation();
+                //åˆ¤æ–­æ”¹å¤§å°
+                if (IsResizeArea(evt.localMousePosition))
+                {
+                    _mouseOffset = evt.mousePosition - layout.size;
+                    _isResizing = true;
+                    evt.StopPropagation();
+                }
             }
         }
 
@@ -201,7 +249,7 @@ namespace BhTreeUtils
             {
                 Vector2 newSize = evt.mousePosition - _mouseOffset;
                 newSize = Vector2.Max(_defSize, newSize);
-                // ¸üĞÂ½ÚµãµÄ´óĞ¡
+                // æ›´æ–°èŠ‚ç‚¹çš„å¤§å°
                 style.width = newSize.x;
                 style.height = newSize.y;
 
@@ -221,7 +269,7 @@ namespace BhTreeUtils
 
         private bool IsResizeArea(Vector2 position)
         {
-            // ¸ù¾İĞèÒª¶¨ÒåresizerÇøÓò£¬ÕâÀïÒÔÓÒÏÂ½ÇÎªÀı
+            // æ ¹æ®éœ€è¦å®šä¹‰resizeråŒºåŸŸï¼Œè¿™é‡Œä»¥å³ä¸‹è§’ä¸ºä¾‹
             return position.x >= layout.width - 10f &&
                    position.y >= layout.height - 10f;
         }
@@ -229,12 +277,12 @@ namespace BhTreeUtils
         private void Init()
         {
             InitConfig();
-            //»ñµÃÀàĞÍ
+            //è·å¾—ç±»å‹
             _type = GetType();
 
             FieldInfo[] fields = _type.GetFields(_flag);
 
-            //ÉèÖÃ±êÌâÑÕÉ«
+            //è®¾ç½®æ ‡é¢˜é¢œè‰²
             Label lbTitle = mainContainer.Q<Label>("title-label", (string)null);
             lbTitle.style.color = Color.black;
             lbTitle.style.fontSize = 18;
@@ -262,7 +310,7 @@ namespace BhTreeUtils
                     ele.style.width = new Length(96, LengthUnit.Percent);
                     ele.style.marginTop = 8;
                     ele.style.alignSelf = Align.Center;
-                    
+
                     if (attr.Type() != NodeTypeEnum.Note)
                     {
                         ele.style.borderBottomColor = Color.white;
@@ -368,16 +416,16 @@ namespace BhTreeUtils
 
         private void UpdateNodeSize()
         {
-            // ¼ÆËãÄÚÈİµÄ×Ü¸ß¶È
+            // è®¡ç®—å†…å®¹çš„æ€»é«˜åº¦
             float contentHeight = _defHeight + extensionContainer.layout.height + 10 + _borderOffset;
 
-            // ÉèÖÃ Node µÄĞÂ¸ß¶È
-            SetSize(new Vector2(layout.width + _borderOffset, contentHeight));
+            // è®¾ç½® Node çš„æ–°é«˜åº¦
+            SetSize(new Vector2(_defWidth + _borderOffset, contentHeight));
         }
 
         protected virtual void InitConfig()
         {
-            title = "Ä¬ÈÏ½Úµã";
+            title = "é»˜è®¤èŠ‚ç‚¹";
         }
     }
 }

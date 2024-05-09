@@ -2,13 +2,13 @@ using System;
 using System.Runtime.CompilerServices;
 
 /// <summary>
-/// ±êÇ©
+/// æ ‡ç­¾
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
 public class E_Label : EBase
 {
     /// <summary>
-    /// ±êÇ©
+    /// æ ‡ç­¾
     /// </summary>
     /// <param name="lineNumber"></param>
     public E_Label([CallerLineNumber] int lineNumber = 0) {

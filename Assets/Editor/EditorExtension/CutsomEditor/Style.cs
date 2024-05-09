@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
-[EName("UI???")]
+[EName("UI样式")]
 public class Style : BaseEditor<Style>
 {
     [MenuItem("Test/Style")]

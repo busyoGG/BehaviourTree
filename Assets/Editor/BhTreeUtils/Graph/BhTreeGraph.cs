@@ -7,61 +7,144 @@ using UnityEngine.UIElements;
 
 namespace BhTreeUtils
 {
-    public class BhTreeGraph: GraphView
+    public class BhTreeGraph : GraphView
     {
         private EditorWindow _editorWindow;
 
         private BhSearchWindow _seachWindow;
+
+        private Vector2 _defaultNodeSize = new Vector2(200, 102);
+
+        private RootNode _clickNode;
+
         
-        private Vector2 _defaultNodeSize = new Vector2(200,102);
+        /// <summary>
+        /// æ˜¯å¦åœ¨é€‰æ‹©
+        /// </summary>
+        private bool _isSelect = false;
+
+        /// <summary>
+        /// é¼ æ ‡æ˜¯å¦æŒ‰ä¸‹
+        /// </summary>
+        private bool _isDown = false;
         
+        /// <summary>
+        /// é¼ æ ‡æ˜¯å¦ç§»åŠ¨äº†
+        /// </summary>
+        private bool _isMoved = false;
+
 
         public BhTreeGraph(EditorWindow editorWindow, BhSearchWindow provider)
         {
             _editorWindow = editorWindow;
             _seachWindow = provider;
-            
-            //ÔÚÓÒ¼ü²Ëµ¥ÖĞÌí¼Ó½Úµã
+
+            //åœ¨å³é”®èœå•ä¸­æ·»åŠ èŠ‚ç‚¹
             provider.onSelectEntryHandler = (searchTreeEntry, searchWindowContext) =>
             {
                 var windowRoot = _editorWindow.rootVisualElement;
-                var windowMousePosition = windowRoot.ChangeCoordinatesTo(windowRoot, searchWindowContext.screenMousePosition - _editorWindow.position.position);
+                var windowMousePosition = windowRoot.ChangeCoordinatesTo(windowRoot,
+                    searchWindowContext.screenMousePosition - _editorWindow.position.position);
                 var graphMousePosition = contentViewContainer.WorldToLocal(windowMousePosition);
                 var type = searchTreeEntry.userData as Type;
                 CreateNode(type, graphMousePosition);
                 return true;
             };
-            
+
             nodeCreationRequest += context =>
             {
                 SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), provider);
                 // AddElement(new RootNode());
             };
-            
-            //³ß´çºÍ¸¸¿Ø¼şÏàÍ¬
+
+            //å°ºå¯¸å’Œçˆ¶æ§ä»¶ç›¸åŒ
             this.StretchToParentSize();
-            //¹öÂÖËõ·Å
+            //æ»šè½®ç¼©æ”¾
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
-            //´°¿ÚÄÚÈİÍÏ¶¯
+            //çª—å£å†…å®¹æ‹–åŠ¨
             this.AddManipulator(new ContentDragger());
-            //Ñ¡ÖĞNodeÒÆ¶¯¹¦ÄÜ
+            //é€‰ä¸­Nodeç§»åŠ¨åŠŸèƒ½
             this.AddManipulator(new SelectionDragger());
-            //¶à¸önode¿òÑ¡¹¦ÄÜ
+            //å¤šä¸ªnodeæ¡†é€‰åŠŸèƒ½
             this.AddManipulator(new RectangleSelector());
-            
-            //¼ÓÔØÑùÊ½±íºÍÍø¸ñ
+
+            //åŠ è½½æ ·å¼è¡¨å’Œç½‘æ ¼
             var styleSheet = EditorGUIUtility.Load("Assets/Editor/BhTreeUtils/Graph/GridBackground.uss") as StyleSheet;
             styleSheets.Add(styleSheet);
             var grid = new GridBackground();
             Insert(0, grid);
             grid.StretchToParentSize();
+
+
+            RegisterCallback<PointerDownEvent>(evt =>
+            {
+                _isDown = true;
+            });
+            
+            RegisterCallback<PointerMoveEvent>(evt =>
+            {
+                if (_isDown)
+                {
+                    _isMoved = true;
+                }
+            });
+
+            //ç›‘å¬ç‚¹å‡»çš„èŠ‚ç‚¹
+            RegisterCallback<ClickEvent>(evt =>
+            {
+                if (!_isMoved)
+                {
+                    Vector2 localMousePosition = evt.position - new Vector3(layout.xMin, layout.yMin);
+                    // è·å–å½“å‰è¢«é€‰ä¸­çš„å¯¹è±¡
+                    var currentSelection = panel.Pick(localMousePosition);
+
+                    if (currentSelection == null)
+                    {
+                        if (_clickNode != null)
+                        {
+                            _clickNode.UnSelected();
+                            _clickNode = null;
+                        }
+                    }
+                    else
+                    {
+                        while (currentSelection != null && currentSelection is not RootNode)
+                        {
+                            currentSelection = currentSelection.parent;
+                        }
+
+                        if (currentSelection == null)
+                        {
+                            if (_clickNode != null)
+                            {
+                                _clickNode.UnSelected();
+                                _clickNode = null;
+                            }
+                        }
+                        else
+                        {
+                            if (_clickNode != null)
+                            {
+                                _clickNode.UnSelected();
+                                _clickNode = null;
+                            }
+
+                            _clickNode = currentSelection as RootNode;
+                            _clickNode?.Selected();
+                        }
+                    }
+                }
+
+                _isMoved = false;
+                _isDown = false;
+            });
         }
-        
+
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
         {
-            //´æ´¢·ûºÏÌõ¼şµÄ¼æÈİµÄ¶Ë¿Ú
+            //å­˜å‚¨ç¬¦åˆæ¡ä»¶çš„å…¼å®¹çš„ç«¯å£
             List<Port> compatiblePorts = new List<Port>();
-            //±éÀúGraphviewÖĞËùÓĞµÄPort ´ÓÖĞÑ°ÕÒ
+            //éå†Graphviewä¸­æ‰€æœ‰çš„Port ä»ä¸­å¯»æ‰¾
             ports.ForEach(
                 (port) =>
                 {
@@ -73,11 +156,11 @@ namespace BhTreeUtils
             );
             return compatiblePorts;
         }
-        
-        public RootNode CreateNode(Type type,Vector2 position)
+
+        public RootNode CreateNode(Type type, Vector2 position)
         {
             RootNode node = Activator.CreateInstance(type) as RootNode;
-            //ÕâÀïÖ»ÓÃµ½ÁËposition
+            //è¿™é‡Œåªç”¨åˆ°äº†position
             node.SetPosition(new Rect(position, Vector2.zero));
             node.RegistResize(this);
             node.SetSize(_defaultNodeSize);
@@ -85,7 +168,7 @@ namespace BhTreeUtils
             return node;
         }
 
-        
+
         public Edge MakeEdge(Port oput, Port iput)
         {
             var edge = new Edge { output = oput, input = iput };

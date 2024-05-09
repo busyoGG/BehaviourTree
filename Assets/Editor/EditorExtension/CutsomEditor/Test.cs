@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-[EName("²âÊÔ´°¿Ú")]
+[EName("æµ‹è¯•çª—å£")]
 public class Test : BaseEditor<Test>
 {
     [MenuItem("Test/Test1")]
@@ -12,40 +12,40 @@ public class Test : BaseEditor<Test>
     }
 
     [E_Label, EL_Horizontal(true)]
-    public string label = "²âÊÔLabel";
+    public string label = "æµ‹è¯•Label";
 
     [E_Input(50, false), ES_Size(20, 40, ESPercent.Width)]
     public string strInput;
 
-    [E_Button("²âÊÔ°´Å¥"), ES_Size(20, 40, ESPercent.Width), EL_Horizontal(false)]
+    [E_Button("æµ‹è¯•æŒ‰é’®"), ES_Size(20, 40, ESPercent.Width), EL_Horizontal(false)]
     public void ShowHello()
     {
-        //Debug.Log("µã»÷²âÊÔ°´Å¥");
-        //label = "ĞŞ¸Älabel";
+        //Debug.Log("ç‚¹å‡»æµ‹è¯•æŒ‰é’®");
+        //label = "ä¿®æ”¹label";
         tex.Add(null);
         Refresh();
     }
 
     [E_Label, EL_Horizontal(true)]
-    public string label2 = "²âÊÔLabel2";
+    public string label2 = "æµ‹è¯•Label2";
 
     [E_Texture, ES_Size(70, 70), EL_Horizontal(false)]
     public Texture texture;
 
-    [E_Texture, ES_Size(70, 70), EL_Foldout(true, "²âÊÔÕÛµş"), EL_List(true, EL_ListType.Flex, true, true, 100, 200, ESPercent.Width)]
+    [E_Texture, ES_Size(70, 70), EL_Foldout(true, "æµ‹è¯•æŠ˜å "), EL_List(true, EL_ListType.Flex, true, true, 100, 200, ESPercent.Width)]
     public List<Texture> tex = new List<Texture>() { null, null, null, null, null, null };
 
     [E_Label, ES_Size(70, 70), EL_List(true, EL_ListType.Flex, true), EL_Foldout(false)]
     public List<string> labels = new List<string>() { "aaaaaaaa", "aaaaaaaa", "aaaaaaaa", "aaaaaaaa", "aaaaaaaa", "aaaaaaaa", "aaaaaaaa" };
 
     [E_Label, ES_Size(70, 70), EL_List(true, EL_ListType.Vertical, false, true, 100, 200, ESPercent.Width)]
-    public string labelL1 = "²âÁ¹ÁĞ±í1";
+    public string labelL1 = "æµ‹å‡‰åˆ—è¡¨1";
     [E_Label, ES_Size(70, 100)]
-    public string labelL2 = "²âÊÔÁĞ±í2";
+    public string labelL2 = "æµ‹è¯•åˆ—è¡¨2";
     [E_Label, ES_Size(70, 70), EL_List(false, EL_ListType.Vertical, false)]
-    public string labelL3 = "²âÊÔÁĞ±í3";
+    public string labelL3 = "æµ‹è¯•åˆ—è¡¨3";
 
-    [E_Button("Ë¢ĞÂ½çÃæ")]
+    [E_Button("åˆ·æ–°ç•Œé¢")]
     private void Refresh()
     {
         RefreshUIInit();

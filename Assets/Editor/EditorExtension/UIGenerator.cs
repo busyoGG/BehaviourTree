@@ -8,11 +8,11 @@ public class UIGenerator
 {
     private static readonly BindingFlags Flag = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
     /// <summary>
-    /// Éú³ÉButton
+    /// ç”ŸæˆButton
     /// </summary>
-    /// <param name="buttonName">°´Å¥Ãû×Ö</param>
-    /// <param name="method">°´Å¥·½·¨</param>
-    /// <param name="ins">ÊµÀı</param>
+    /// <param name="buttonName">æŒ‰é’®åå­—</param>
+    /// <param name="method">æŒ‰é’®æ–¹æ³•</param>
+    /// <param name="ins">å®ä¾‹</param>
     /// <returns></returns>
     public static Action<GUIStyle, GUILayoutOption[]> GenerateButton(string buttonName, MethodInfo method, object ins)
     {
@@ -30,9 +30,9 @@ public class UIGenerator
     }
 
     /// <summary>
-    /// Éú³ÉLabel
+    /// ç”ŸæˆLabel
     /// </summary>
-    /// <param name="labelName">±êÇ©Ãû</param>
+    /// <param name="labelName">æ ‡ç­¾å</param>
     /// <returns></returns>
     public static Action<GUIStyle, GUILayoutOption[]> GenerateLabel(Func<string> labelName)
     {
@@ -45,7 +45,7 @@ public class UIGenerator
     }
 
     /// <summary>
-    /// Éú³ÉTextField
+    /// ç”ŸæˆTextField
     /// </summary>
     /// <param name="name"></param>
     /// <param name="res"></param>
@@ -98,7 +98,7 @@ public class UIGenerator
     }
 
     /// <summary>
-    /// »æÖÆobject
+    /// ç»˜åˆ¶object
     /// </summary>
     /// <param name="name"></param>
     /// <param name="obj"></param>
@@ -118,7 +118,7 @@ public class UIGenerator
     }
 
     /// <summary>
-    /// »ñµÃÀ©Õ¹ºóµÄ²¼¾Ö
+    /// è·å¾—æ‰©å±•åçš„å¸ƒå±€
     /// </summary>
     /// <param name="options"></param>
     /// <returns></returns>

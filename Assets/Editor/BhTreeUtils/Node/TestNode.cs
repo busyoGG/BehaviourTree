@@ -3,14 +3,14 @@ namespace BhTreeUtils
     public class TestNode : RootNode
     {
         [GraphNode(NodeTypeEnum.Note,"Custom")]
-        protected string _desc = "±¸×¢";
-        [GraphNode(NodeTypeEnum.Input,"²âÊÔÊôĞÔ")] private string _test1 = "";
-        [GraphNode(NodeTypeEnum.Input,"²âÊÔÊôĞÔ")] private string _test2 = "";
-        [GraphNode(NodeTypeEnum.Input,"²âÊÔÊôĞÔ")] private string _test3 = "";
+        protected string _desc = "å¤‡æ³¨";
+        [GraphNode(NodeTypeEnum.Input,"æµ‹è¯•å±æ€§")] private string _test1 = "";
+        [GraphNode(NodeTypeEnum.Input,"æµ‹è¯•å±æ€§")] private string _test2 = "";
+        [GraphNode(NodeTypeEnum.Input,"æµ‹è¯•å±æ€§")] private string _test3 = "";
 
         protected override void InitConfig()
         {
-            title = "²âÊÔ½Úµã";
+            title = "æµ‹è¯•èŠ‚ç‚¹";
             _NodeType = "Test";
         }
     }
