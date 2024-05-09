@@ -132,13 +132,14 @@ namespace BhTreeUtils
                                 currentSelection = currentSelection.parent;
                             }
                             
-                            if (currentSelection == null || _clickNode != null && currentSelection != _clickNode)
+                            if (currentSelection == null || _clickNode != null && currentSelection != _clickNode && currentSelection is not RootNode)
                             {
                                 _clickNode.UnSelected();
                                 _clickNode = null;
                             }
                             else
                             {
+                                _clickNode?.UnSelected();
                                 _clickNode = currentSelection as RootNode;
                                 _clickNode?.Selected();
                             }

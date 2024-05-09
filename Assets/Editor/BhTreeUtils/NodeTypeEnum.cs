@@ -9,7 +9,7 @@
         Color,
         Texture,
         Slide,
+        Toggle,
         Radio,
-        RadioGroup
     }
 }

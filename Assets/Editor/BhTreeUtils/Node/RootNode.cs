@@ -41,6 +41,11 @@ namespace BhTreeUtils
         private Vector2 _curSize;
 
         /// <summary>
+        /// 默认位置
+        /// </summary>
+        private Vector2 _defPos;
+
+        /// <summary>
         /// 默认高度
         /// </summary>
         private float _defHeight;
@@ -130,6 +135,7 @@ namespace BhTreeUtils
             Debug.Log("创建完成，开始渲染  " + layout.size);
             _defHeight = titleContainer.layout.height + _outputPort.layout.height;
             _defWidth = titleContainer.layout.width;
+            _defPos = layout.position;
 
             Init();
             schedule.Execute(() =>
@@ -295,6 +301,8 @@ namespace BhTreeUtils
                 _isResizing = false;
                 evt.StopPropagation();
             }
+
+            _defPos = layout.position + new Vector2(_borderOffset * 0.5f, _borderOffset * 0.5f);
         }
 
         private bool IsResizeArea(Vector2 position)
@@ -505,6 +513,48 @@ namespace BhTreeUtils
                             ele.Add(num);
 
                             break;
+                        case NodeTypeEnum.Radio:
+
+                            RadioButtonGroup radioButtonGroup = new RadioButtonGroup();
+                            
+                            ele.Add(radioButtonGroup);
+
+                            foreach (var selection in extra)
+                            {
+                                RadioButton radio = new RadioButton();
+                                radio.Children().FirstOrDefault().style.flexGrow = 0;
+                                
+                                Label lbRadio = new Label();
+                                lbRadio.style.fontSize = _fontSize;
+                                lbRadio.text = selection;
+                                radio.Add(lbRadio);
+                                
+                                radioButtonGroup.Add(radio);
+                            }
+                            
+                            radioButtonGroup.RegisterValueChangedCallback(evt =>
+                            {
+                                setValue(this, evt.newValue);
+                            });
+                            break;
+                        case NodeTypeEnum.Toggle:
+                            
+                            Toggle toggle = new Toggle();
+                            toggle.Children().FirstOrDefault().style.flexGrow = 0;
+                            
+                            toggle.RegisterValueChangedCallback(evt =>
+                            {
+                                setValue(this, evt.newValue);
+                            });
+                            
+                            ele.Add(toggle);
+                            
+                            foreLabel = new Label();
+                            foreLabel.style.fontSize = _fontSize;
+                            foreLabel.text = extra.Length > 0 ? extra[0] : field.Name;
+                            toggle.Add(foreLabel);
+                            
+                            break;
                     }
 
                     extensionContainer.Add(ele);
@@ -543,7 +593,7 @@ namespace BhTreeUtils
 
                 // 设置 Node 的新高度
                 SetSize(new Vector2(_defWidth, contentHeight));
-                Bordered();
+                DrawBorder();
             }
         }
 
@@ -555,16 +605,16 @@ namespace BhTreeUtils
             if (_borderOffset == 0)
             {
                 _isBordered = false;
-                Bordered();
+                DrawBorder();
             }
             else if (!_isBordered)
             {
                 _isBordered = true;
-                Bordered();
+                DrawBorder();
             }
         }
 
-        private void Bordered()
+        private void DrawBorder()
         {
             if (_isBordered)
             {
@@ -578,6 +628,11 @@ namespace BhTreeUtils
                     style.width = _curSize.x + _borderOffset;
                     style.height = _curSize.y + _borderOffset;
                 }
+                
+                _defPos = new Vector2(style.left.value.value,style.top.value.value);
+                
+                style.left = _defPos.x - _borderOffset * 0.5f;
+                style.top = _defPos.y - _borderOffset * 0.5f;
             }
             else
             {
@@ -591,6 +646,8 @@ namespace BhTreeUtils
                     style.width = _curSize.x;
                     style.height = _curSize.y;
                 }
+                style.left = _defPos.x;
+                style.top = _defPos.y;
             }
         }
 
