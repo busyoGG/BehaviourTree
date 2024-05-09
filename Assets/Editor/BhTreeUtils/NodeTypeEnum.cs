@@ -8,6 +8,8 @@
         Enum,
         Color,
         Texture,
-        Slide
+        Slide,
+        Radio,
+        RadioGroup
     }
 }

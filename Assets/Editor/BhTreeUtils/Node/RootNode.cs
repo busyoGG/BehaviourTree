@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -18,6 +19,7 @@ namespace BhTreeUtils
         private readonly BindingFlags _flag = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
                                               BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
+        public string guid;
         /// <summary>
         /// 是否完成渲染初始化
         /// </summary>
@@ -83,6 +85,18 @@ namespace BhTreeUtils
         /// </summary>
         private bool _isSelected = false;
 
+        //----- 描边颜色 ------ start
+        
+        protected Color _selectColor = Color.red;
+        
+        protected Color _parentColor = Color.green;
+
+        protected Color _runColor = Color.green;
+
+        protected Color _passColor = Color.yellow;
+        
+        //----- 描边颜色 ------ end
+
         /// <summary>
         /// 节点类型
         /// </summary>
@@ -90,6 +104,14 @@ namespace BhTreeUtils
 
         public RootNode()
         {
+            //生成唯一标识
+            guid = GUID.Generate().ToString();
+            Label lbGuid = new Label(guid);
+            lbGuid.style.position = Position.Absolute;
+            lbGuid.style.top = -20;
+            lbGuid.style.alignSelf = Align.Center;
+            Add(lbGuid);
+            
             //添加输入端口
             _inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(Node));
             _inputPort.portName = "Parent";
@@ -145,13 +167,13 @@ namespace BhTreeUtils
             if (run)
             {
                 _isRun = true;
-                SetBorder(Color.green, 5);
+                SetBorder(_runColor, 5);
             }
             else
             {
                 if (_isRun)
                 {
-                    SetBorder(Color.yellow, 5);
+                    SetBorder(_passColor, 5);
                 }
                 else
                 {
@@ -183,11 +205,11 @@ namespace BhTreeUtils
         {
             if (leaf == null)
             {
-                SetBorder(Color.red, 5);
+                SetBorder(_selectColor, 5);
             }
             else
             {
-                SetBorder(Color.green, 5);
+                SetBorder(_parentColor, 5);
             }
 
             //遍历节点
@@ -201,8 +223,7 @@ namespace BhTreeUtils
 
         public void UnSelected()
         {
-            Debug.Log("不描边");
-            SetBorder(Color.red, 0);
+            SetBorder(_selectColor, 0);
             //遍历节点
             var connections = _inputPort.connections;
             foreach (var edge in connections)
