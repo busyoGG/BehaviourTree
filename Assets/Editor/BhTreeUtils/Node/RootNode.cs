@@ -578,7 +578,7 @@ namespace BhTreeUtils
                             break;
                         case NodeTypeEnum.Box:
 
-                            if (extra[0] != "")
+                            if (gName != null)
                             {
                                 foreLabel = new Label();
                                 foreLabel.style.fontSize = _fontSize * 0.8f;
