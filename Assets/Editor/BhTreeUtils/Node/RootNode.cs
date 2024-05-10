@@ -1,4 +1,5 @@
 using System;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor;
@@ -108,6 +109,16 @@ namespace BhTreeUtils
         /// </summary>
         protected string _NodeType = "None";
 
+        /// <summary>
+        /// 节点数据
+        /// </summary>
+        protected dynamic _data = new ExpandoObject();
+        
+        /// <summary>
+        /// 数据节点
+        /// </summary>
+        GDataNode _dataNode = new GDataNode();
+
         public RootNode()
         {
             //生成唯一标识
@@ -203,7 +214,7 @@ namespace BhTreeUtils
             var connections = _outputPort.connections;
             foreach (var edge in connections)
             {
-                RootNode node = edge.output.node as RootNode;
+                RootNode node = edge.input.node as RootNode;
                 node?.ClearRunState();
             }
         }
@@ -240,6 +251,34 @@ namespace BhTreeUtils
             }
         }
 
+        /// <summary>
+        /// 判断是否有前置节点
+        /// </summary>
+        /// <returns></returns>
+        public bool HasParent()
+        {
+            return _inputPort.connections.Any();
+        }
+
+        /// <summary>
+        /// 保存数据
+        /// </summary>
+        /// <returns></returns>
+        public GDataNode SaveData()
+        {
+            _data.type = _NodeType;
+            SetData();
+            _dataNode.SetData(_data);
+            //遍历节点
+            var connections = _outputPort.connections;
+            foreach (var edge in connections)
+            {
+                RootNode node = edge.input.node as RootNode;
+                _dataNode.AddChild(node.SaveData());
+            }
+            return _dataNode;
+        }
+        
         /// <summary>
         /// 设置描边颜色，最好是在所有初始化完成后再调用
         /// </summary>
@@ -716,6 +755,13 @@ namespace BhTreeUtils
         protected virtual void InitConfig()
         {
             title = "默认节点";
+        }
+
+        /// <summary>
+        /// 保存数据
+        /// </summary>
+        protected virtual void SetData()
+        {
         }
     }
 }

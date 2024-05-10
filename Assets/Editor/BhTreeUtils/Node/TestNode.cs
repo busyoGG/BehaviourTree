@@ -23,7 +23,7 @@ namespace BhTreeUtils
         private int _radio;
 
         
-        [GraphNode(NodeTypeEnum.Box, "2"), GName("测试box")]
+        [GraphNode(NodeTypeEnum.Box, "2")]
         private string _box = "";
         [GraphNode(NodeTypeEnum.Toggle, "选择1"),GWidth(100,LengthUnit.Pixel)] private bool _toggle1;
         [GraphNode(NodeTypeEnum.Toggle, "选择2"),GWidth(100,LengthUnit.Pixel)] private bool _toggle2;
@@ -33,6 +33,11 @@ namespace BhTreeUtils
         {
             title = "测试节点";
             _NodeType = "Test";
+        }
+
+        protected override void SetData()
+        {
+            _data.extra = "添加一条额外数据";
         }
     }
 }

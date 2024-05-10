@@ -33,6 +33,8 @@ namespace BhTreeUtils
         /// </summary>
         private bool _isMoved = false;
 
+        private Dictionary<string, RootNode> _allNodes = new Dictionary<string, RootNode>();
+
 
         public BhTreeGraph(EditorWindow editorWindow, BhSearchWindow provider)
         {
@@ -51,10 +53,29 @@ namespace BhTreeUtils
                 return true;
             };
 
+            //监听创建节点
             nodeCreationRequest += context =>
             {
+                //打开搜索框
                 SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), provider);
                 // AddElement(new RootNode());
+            };
+
+            //监听节点删除
+            graphViewChanged += evt =>
+            {
+                if (evt.elementsToRemove != null)
+                {
+                    foreach (var element in evt.elementsToRemove)
+                    {
+                        if (element is RootNode node)
+                        {
+                            _allNodes.Remove(node.guid);
+                        }
+                    }
+                }
+
+                return evt;
             };
 
             //尺寸和父控件相同
@@ -177,6 +198,7 @@ namespace BhTreeUtils
             node.RegistResize(this);
             node.SetSize(_defaultNodeSize);
             AddElement(node);
+            _allNodes.Add(node.guid,node);
             return node;
         }
 
@@ -190,10 +212,35 @@ namespace BhTreeUtils
             return edge;
         }
 
-        bool IsInputField(VisualElement element)
+        /// <summary>
+        /// 是否可输入UI
+        /// </summary>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        private bool IsInputField(VisualElement element)
         {
             // 判断元素是否是BaseField<T>或其派生类的实例
             return element.GetType().BaseType.IsGenericType;
+        }
+
+        /// <summary>
+        /// 保存数据
+        /// </summary>
+        public List<GDataNode> SaveData()
+        {
+            List<GDataNode> list = new List<GDataNode>();
+            foreach (var nodeData in _allNodes)
+            {
+                RootNode node = nodeData.Value;
+
+                if (!node.HasParent())
+                {
+                    GDataNode dataNode = node.SaveData();
+                    list.Add(dataNode);
+                }
+            }
+
+            return list;
         }
     }
 }
