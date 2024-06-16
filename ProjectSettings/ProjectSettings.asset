@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: f6e9161b6dd988b4da2d2ffcaa14adfb
+  productGUID: 90742ee322fbb384482f2b68536f7ab4
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -155,7 +155,8 @@ PlayerSettings:
   resetResolutionOnWindowResize: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Standalone: com.DefaultCompany.BehaviourTree
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -765,7 +766,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: BehaviourTree
-  metroPackageVersion: 
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -773,7 +774,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: BehaviourTree
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: BehaviourTree
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -837,13 +838,13 @@ PlayerSettings:
   embeddedLinuxEnableGamepadInput: 1
   hmiLogStartupTiming: 0
   hmiCpuConfiguration: 
-  apiCompatibilityLevel: 6
+  apiCompatibilityLevel: 3
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 017ca025-f920-436a-a004-8bcc0331feea
+  cloudProjectId: f8a365bb-abf2-4dee-a35f-5e880dd0993f
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: BehaviourTree
+  projectName: BehaviourTree 2024-06-16_17-20-13
   organizationId: busyo
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0

@@ -20,7 +20,7 @@ namespace BhTree
             return _result;
         }
 
-        protected void AddChild(BhBaseNode node)
+        public void AddChild(BhBaseNode node)
         {
             _children.Add(node);
             node._parent = this;

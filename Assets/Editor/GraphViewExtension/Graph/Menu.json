@@ -1,0 +1,23 @@
+﻿[
+  {
+    "name":"装饰节点",
+    "child":[
+      {
+        "name":"胜利节点",
+        "type":"DNodeSuccess"
+      },
+      {
+        "name":"失败节点",
+        "type":"DNodeFail"
+      },
+      {
+        "name":"反转节点",
+        "type":"DNodeReverse"
+      }
+    ]
+  },
+  {
+    "name":"测试节点",
+    "type":"TestNode"
+  }
+]
