@@ -2,9 +2,19 @@ namespace BhTree
 {
     public class DNodeSuccess:BhBaseNode
     {
-        protected override BhResult GetResult()
+        public override bool CheckState(BhResult res)
         {
-            return BhResult.Success;
+            return true;
+        }
+        
+        public override bool CheckStop()
+        {
+            if (currentChildIndex >= children.Count)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

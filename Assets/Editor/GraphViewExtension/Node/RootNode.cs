@@ -17,6 +17,7 @@ namespace GraphViewExtension
         /// 所属的GraphView
         /// </summary>
         private GGraph _graph;
+
         Port _inputPort;
         Port _outputPort;
 
@@ -179,7 +180,7 @@ namespace GraphViewExtension
                 UpdateNodeSize();
                 _inited = true;
             }).StartingIn(1);
-            
+
             //刷新 不然会有显示BUG
             RefreshExpandedState();
             RefreshPorts();
@@ -548,8 +549,13 @@ namespace GraphViewExtension
                     }
 
                     //设置值的委托函数
-                    SetFieldDelegate setValue =
+                    SetFieldDelegate setValue = 
                         (SetFieldDelegate)Delegate.CreateDelegate(typeof(SetFieldDelegate), field, "SetValue", false);
+
+                    void SetData(object o)
+                    {
+                        setValue(this, o);
+                    }
 
                     string[] extra = attr.GetExtra();
                     //创建UI
@@ -576,7 +582,7 @@ namespace GraphViewExtension
                             var fontChild = text.Children().FirstOrDefault().Children().FirstOrDefault();
                             fontChild.style.fontSize = _fontSize;
 
-                            text.RegisterValueChangedCallback(evt => { setValue(this, evt.newValue); });
+                            text.RegisterValueChangedCallback(evt => { SetData(evt.newValue); });
                             ele.Add(text);
                             break;
                         case NodeTypeEnum.Note:
@@ -618,7 +624,7 @@ namespace GraphViewExtension
                                 fontChild = child.Children().FirstOrDefault().Children().FirstOrDefault();
                                 fontChild.style.fontSize = _fontSize;
 
-                                note.RegisterValueChangedCallback((evt) => { setValue(this, evt.newValue); });
+                                note.RegisterValueChangedCallback((evt) => { SetData(evt.newValue); });
 
                                 note.RegisterCallback<FocusOutEvent>(evt => { UpdateNodeSize(); });
 
@@ -679,7 +685,7 @@ namespace GraphViewExtension
 
                                 slider.RegisterValueChangedCallback(evt =>
                                 {
-                                    setValue(this, evt.newValue);
+                                    SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
 
@@ -696,7 +702,7 @@ namespace GraphViewExtension
 
                                 slider.RegisterValueChangedCallback(evt =>
                                 {
-                                    setValue(this, evt.newValue);
+                                    SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
 
@@ -713,6 +719,8 @@ namespace GraphViewExtension
 
                             ele.Add(radioButtonGroup);
 
+                            int index = 0;
+
                             foreach (var selection in extra)
                             {
                                 RadioButton radio = new RadioButton();
@@ -724,9 +732,16 @@ namespace GraphViewExtension
                                 radio.Add(lbRadio);
 
                                 radioButtonGroup.Add(radio);
+
+                                if (index == (int)value)
+                                {
+                                    radio.value = true;
+                                }
+                                
+                                index++;
                             }
 
-                            radioButtonGroup.RegisterValueChangedCallback(evt => { setValue(this, evt.newValue); });
+                            radioButtonGroup.RegisterValueChangedCallback(evt => { SetData(evt.newValue); });
                             break;
                         case NodeTypeEnum.Toggle:
 
@@ -734,7 +749,13 @@ namespace GraphViewExtension
                             toggle.style.width = StyleKeyword.Auto;
                             toggle.Children().FirstOrDefault().style.flexGrow = 0;
 
-                            toggle.RegisterValueChangedCallback(evt => { setValue(this, evt.newValue); });
+                            toggle.value = (bool)value;
+
+                            toggle.RegisterValueChangedCallback(evt =>
+                            {
+                                SetData(evt.newValue);
+                                Debug.Log(field.GetValue(this));
+                            });
 
                             ele.Add(toggle);
 
@@ -914,7 +935,6 @@ namespace GraphViewExtension
         /// </summary>
         protected virtual void CustomUI()
         {
-            
         }
     }
 }

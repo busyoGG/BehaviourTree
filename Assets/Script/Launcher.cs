@@ -10,39 +10,10 @@ namespace Game
         private void Start()
         {
             SaveJson json = ConfigLoader.Load();
-            _root = InitBHNode(json);
+            _root = TreeManager.Ins().InitBHNode(json);
+            
+            TreeManager.Ins().Run(_root);
         }
-
-        private void Update()
-        {
-            _root.Run();
-        }
-
-        private BhBaseNode InitBHNode(SaveJson json)
-        {
-            var data = json.data;
-
-            BhBaseNode node = null;
-
-            switch (data.node)
-            {
-                case "DNodeFail":
-                    node = new DNodeFail();
-                    break;
-                case "DNodeSuccess":
-                    node = new DNodeSuccess();
-                    break;
-                case "DNodeReverse":
-                    node = new DNodeReverse();
-                    break;
-            }
-
-            foreach (var child in json.children)
-            {
-                node?.AddChild(InitBHNode(child));
-            }
-
-            return node;
-        }
+        
     }
 }

@@ -2,19 +2,24 @@
 {
     public class CNodeSequence: BhBaseNode
     {
-        protected override BhResult GetResult()
+        public override bool CheckState(BhResult res)
         {
-            BhResult res = BhResult.Success;
-            foreach (var node in _children)
+            if (res == BhResult.Fail || res == BhResult.Running)
             {
-                res = node.Run();
-                if (res != BhResult.Success)
-                {
-                    return res;
-                }
+                return false;
+            }
+            
+            return true;
+        }
+        
+        public override bool CheckStop()
+        {
+            if (currentChildIndex >= children.Count || result == BhResult.Fail)
+            {
+                return true;
             }
 
-            return res;
+            return false;
         }
     }
 }

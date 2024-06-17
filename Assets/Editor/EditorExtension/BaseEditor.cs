@@ -34,7 +34,7 @@ public class BaseEditor<T> : EditorWindow where T : EditorWindow
         InitWindow(ename.GetName());
 
         //初始化UI
-        Init();
+        Init(); 
     }
 
     private void InitWindow(string windowName)

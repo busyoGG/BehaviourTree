@@ -2,18 +2,27 @@
 {
     public class DNodeReverse: BhBaseNode
     {
-        protected override BhResult GetResult()
+        public override void SetResult(BhResult result)
         {
-            BhResult res = base.GetResult();
-            switch (res)
+            switch (result)
             {
-                case BhResult.Success:
-                    return BhResult.Fail;
                 case BhResult.Fail:
-                    return BhResult.Success;
-                default:
-                    return BhResult.Running;
+                    base.SetResult(BhResult.Success);
+                    break;
+                case BhResult.Success:
+                    base.SetResult(BhResult.Fail);
+                    break;
             }
+        }
+
+        public override bool CheckState(BhResult res)
+        {
+            return true;
+        }
+        
+        public override bool CheckStop()
+        {
+            return true;
         }
     }
 }

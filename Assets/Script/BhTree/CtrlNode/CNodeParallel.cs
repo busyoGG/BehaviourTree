@@ -2,19 +2,23 @@
 {
     public class CNodeParallel: BhBaseNode
     {
-        protected override BhResult GetResult()
+        public override bool CheckState(BhResult res)
         {
-            BhResult res = BhResult.Success;
-            foreach (var node in _children)
+            if (res == BhResult.Running)
             {
-                res = node.Run();
-                if (res != BhResult.Success)
-                {
-                    return res;
-                }
+                return false;
             }
-            
-            return res;
+            return true;
+        }
+
+        public override bool CheckStop()
+        {
+            if (currentChildIndex >= children.Count || result != BhResult.Running)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

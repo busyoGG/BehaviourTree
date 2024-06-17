@@ -1,23 +1,45 @@
 ﻿[
   {
-    "name":"装饰节点",
-    "child":[
+    "name": "装饰节点",
+    "child": [
       {
-        "name":"胜利节点",
-        "type":"DNodeSuccess"
+        "name": "胜利节点",
+        "type": "DNodeSuccess"
       },
       {
-        "name":"失败节点",
-        "type":"DNodeFail"
+        "name": "失败节点",
+        "type": "DNodeFail"
       },
       {
-        "name":"反转节点",
-        "type":"DNodeReverse"
+        "name": "反转节点",
+        "type": "DNodeReverse"
       }
     ]
   },
   {
-    "name":"测试节点",
-    "type":"TestNode"
+    "name": "控制节点",
+    "child": [
+      {
+        "name": "并行节点",
+        "type": "CNodeParallel"
+      },
+      {
+        "name": "选择节点",
+        "type": "CNodeSelect"
+      },
+      {
+        "name": "顺序节点",
+        "type": "CNodeSequence"
+      }
+    ]
+  },
+  {
+    "name": "行为节点",
+    "child": [
+      {
+        "name": "测试节点",
+        "type": "ANodeTest"
+      }
+    ]
   }
 ]
