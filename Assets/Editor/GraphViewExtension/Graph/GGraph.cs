@@ -167,6 +167,7 @@ namespace GraphViewExtension
                                 isInput = true;
                                 break;
                             }
+
                             currentSelection = currentSelection.parent;
                         }
 
@@ -181,8 +182,9 @@ namespace GraphViewExtension
                         else
                         {
                             if (isInput) return;
-                            
-                            if (_clickNode != null && currentSelection != _clickNode && currentSelection is not RootNode)
+
+                            if (_clickNode != null && currentSelection != _clickNode &&
+                                currentSelection is not RootNode)
                             {
                                 _clickNode.UnSelected();
                                 _clickNode = null;
@@ -271,7 +273,7 @@ namespace GraphViewExtension
             }
 
             _allNodes.Clear();
-            
+
             _isOpen = false;
 
             _filePath = "";
@@ -287,13 +289,14 @@ namespace GraphViewExtension
             // 判断元素是否是BaseField<T>或其派生类的实例
             return HasBaseField(element.GetType());
         }
-        
+
         bool HasBaseField(Type type)
         {
             if (type.Name.IndexOf("BaseField") != -1)
             {
                 return true;
             }
+
             // 检查当前类型的基类的字段
             if (type.BaseType != null)
             {
@@ -351,7 +354,7 @@ namespace GraphViewExtension
                 RootNode newNode = CreateNode(type, nodeData.guid,
                     new Vector2(float.Parse(pos[0]), float.Parse(pos[1])),
                     new Vector2(float.Parse(size[0]), float.Parse(size[1])));
-                
+
                 newNode.SetData(nodeData);
 
                 if (parent != null)
@@ -394,7 +397,7 @@ namespace GraphViewExtension
                     return;
                 }
             }
-            
+
             string filePath = EditorUtility.OpenFilePanel("打开ScriptableObject", "Assets/Json", "json");
 
             if (filePath != "")
@@ -405,9 +408,10 @@ namespace GraphViewExtension
                 while (sr.ReadLine() is { } nextLine)
                 {
                     jsonData += nextLine;
-                } 
+                }
+
                 sr.Close();
-                
+
                 List<SaveJson> json = JsonConvert.DeserializeObject<List<SaveJson>>(jsonData);
 
                 List<GDataNode> list = new List<GDataNode>();
@@ -416,7 +420,7 @@ namespace GraphViewExtension
                 {
                     list.Add(ToGDataNode(data));
                 }
-                
+
                 SetFilePath(filePath);
                 OpenData(list);
             }
@@ -424,34 +428,35 @@ namespace GraphViewExtension
 
         private void Save()
         {
-            string filePath = EditorUtility.SaveFilePanel("保存到本地", Application.dataPath + "/Json", "NewFile", "json");
-            
-            if (filePath != "")
+            if (_filePath == "")
             {
-                SetFilePath(filePath);
-                
-                List<GDataNode> list = SaveData();
-
-                List<SaveJson> listJson = new List<SaveJson>();
-
-                foreach (var data in list)
-                {
-                    listJson.Add(ToJson(data));
-                }
-
-                string jsonData = JsonConvert.SerializeObject(listJson);
-                
-                FileInfo myFile = new FileInfo(filePath); 
-                StreamWriter sw = myFile.CreateText();
-       
-                foreach (var s in jsonData) 
-                { 
-                    sw.Write(s); 
-                } 
-                sw.Close();
-                
-                _editorWindow.ShowNotification(new GUIContent("保存成功,路径为: " + filePath));
+                _filePath = EditorUtility.SaveFilePanel("保存到本地", Application.dataPath + "/Json", "NewFile", "json");
             }
+
+            SetFilePath(_filePath);
+
+            List<GDataNode> list = SaveData();
+
+            List<SaveJson> listJson = new List<SaveJson>();
+
+            foreach (var data in list)
+            {
+                listJson.Add(ToJson(data));
+            }
+
+            string jsonData = JsonConvert.SerializeObject(listJson);
+
+            FileInfo myFile = new FileInfo(_filePath);
+            StreamWriter sw = myFile.CreateText();
+
+            foreach (var s in jsonData)
+            {
+                sw.Write(s);
+            }
+
+            sw.Close();
+
+            _editorWindow.ShowNotification(new GUIContent("保存成功,路径为: " + _filePath));
         }
 
         private void Close()
