@@ -20,15 +20,5 @@
                 result = BhResult.Fail;
             }
         }
-
-        public override bool CheckState(BhResult res)
-        {
-            return true;
-        }
-
-        public override bool CheckStop()
-        {
-            return true;
-        }
     }
 }

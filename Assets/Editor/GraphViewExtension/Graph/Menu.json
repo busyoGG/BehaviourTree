@@ -39,6 +39,10 @@
       {
         "name": "测试节点",
         "type": "ANodeTest"
+      },
+      {
+        "name": "延时节点",
+        "type": "ANodeWait"
       }
     ]
   }

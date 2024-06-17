@@ -578,6 +578,7 @@ namespace GraphViewExtension
                             TextField text = new TextField();
                             text.style.flexGrow = 1;
                             text.style.height = _fontSize * 1.2f;
+                            text.value = (string)value;
 
                             var fontChild = text.Children().FirstOrDefault().Children().FirstOrDefault();
                             fontChild.style.fontSize = _fontSize;
@@ -653,6 +654,7 @@ namespace GraphViewExtension
 
                             EnumField enumField = new EnumField(value as Enum);
                             enumField.style.flexGrow = 1;
+                            enumField.value = (Enum)value;
 
                             enumField.RegisterValueChangedCallback(evt => setValue(this, evt.newValue));
 
@@ -680,7 +682,6 @@ namespace GraphViewExtension
 
                                 num.text = extra[1];
 
-                                slider.value = 0;
                                 slider.style.flexGrow = 1;
 
                                 slider.RegisterValueChangedCallback(evt =>
@@ -688,6 +689,9 @@ namespace GraphViewExtension
                                     SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
+                                
+                                slider.value = (int)value;
+                                num.text = value.ToString();
 
                                 ele.Add(slider);
                             }
@@ -697,7 +701,6 @@ namespace GraphViewExtension
 
                                 num.text = extra[0];
 
-                                slider.value = 0;
                                 slider.style.flexGrow = 1;
 
                                 slider.RegisterValueChangedCallback(evt =>
@@ -705,6 +708,9 @@ namespace GraphViewExtension
                                     SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
+                                
+                                slider.value = (float)value;
+                                num.text = value.ToString();
 
                                 ele.Add(slider);
                             }

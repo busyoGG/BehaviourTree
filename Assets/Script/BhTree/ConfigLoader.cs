@@ -40,6 +40,9 @@ namespace BhTree
                     case JTokenType.Float:
                         ((IDictionary<string, object>)obj)[res.Name] = res.Value.Value<float>();
                         break;
+                    case JTokenType.Integer:
+                        ((IDictionary<string, object>)obj)[res.Name] = res.Value.Value<int>();
+                        break;
                     case JTokenType.Boolean:
                         ((IDictionary<string, object>)obj)[res.Name] = res.Value.Value<bool>();
                         break;

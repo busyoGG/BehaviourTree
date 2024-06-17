@@ -14,7 +14,7 @@ namespace BhTree
 
         private Dictionary<string, BhBaseNode> _roots = new Dictionary<string, BhBaseNode>();
         
-        private Dictionary<string, BhBaseNode> _curNode = new Dictionary<string, BhBaseNode>();
+        private Dictionary<BhBaseNode, BhBaseNode> _curNode = new Dictionary<BhBaseNode, BhBaseNode>();
 
         private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
 
@@ -50,20 +50,38 @@ namespace BhTree
         {
             if (node == null) return;
 
-            var children = node.GetChildren();
+            BhBaseNode root = node;
 
-            while (children.Count > 0)
+            BhBaseNode curNode;
+
+            _curNode.TryGetValue(node, out curNode);
+
+            if (curNode == null)
             {
-                node = children[0];
-                children = node.GetChildren();
+                var children = node.GetChildren();
+
+                while (children.Count > 0)
+                {
+                    node = children[0];
+                    children = node.GetChildren();
+                }
+            }
+            else
+            {
+                node = curNode;
             }
 
-            RunNode(node);
+            RunNode(node,root);
         }
 
-        private void RunNode(BhBaseNode node)
+        private void RunNode(BhBaseNode node,BhBaseNode root)
         {
-            if (node == null) return;
+            if (node == null)
+            {
+                //一次执行完成
+                _curNode[root] = null;
+                return;
+            }
 
             var children = node.GetChildren();
 
@@ -97,8 +115,13 @@ namespace BhTree
             
             if (node.CheckStop())
             {
-                RunNode(node.GetParent());
+                RunNode(node.GetParent(),root);
                 node.Reset();
+            }
+            else
+            {
+                Debug.Log("没执行完");
+                _curNode[root] = node;
             }
         }
 
