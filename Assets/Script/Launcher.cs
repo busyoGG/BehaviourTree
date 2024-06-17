@@ -1,4 +1,5 @@
-﻿using BhTree;
+﻿using System;
+using BhTree;
 using UnityEngine;
 
 namespace Game
@@ -12,8 +13,12 @@ namespace Game
             SaveJson json = ConfigLoader.Load();
             _root = TreeManager.Ins().InitBHNode(json);
             
+            // TreeManager.Ins().Run(_root);
+        }
+
+        private void Update()
+        {
             TreeManager.Ins().Run(_root);
         }
-        
     }
 }

@@ -38,6 +38,7 @@ namespace BhTree
         {
             base.Reset();
             _curTime = 0;
+            _defTime = -1;
         }
     }
 }

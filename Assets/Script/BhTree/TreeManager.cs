@@ -13,7 +13,7 @@ namespace BhTree
         private int _id = 0;
 
         private Dictionary<string, BhBaseNode> _roots = new Dictionary<string, BhBaseNode>();
-        
+
         private Dictionary<BhBaseNode, BhBaseNode> _curNode = new Dictionary<BhBaseNode, BhBaseNode>();
 
         private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
@@ -28,11 +28,11 @@ namespace BhTree
             var data = json.data;
 
             string typeName = "BhTree." + data.node;
-            
+
             Type type = Type.GetType(typeName);
-            
+
             BhBaseNode node = Activator.CreateInstance(type) as BhBaseNode;
-            
+
             //初始化数据
             node?.Init(data);
 
@@ -71,10 +71,10 @@ namespace BhTree
                 node = curNode;
             }
 
-            RunNode(node,root);
+            RunNode(node, root);
         }
 
-        private void RunNode(BhBaseNode node,BhBaseNode root)
+        private void RunNode(BhBaseNode node, BhBaseNode root)
         {
             if (node == null)
             {
@@ -85,42 +85,52 @@ namespace BhTree
 
             var children = node.GetChildren();
 
+            BhBaseNode child = null;
+            
             if (children.Count > 0)
             {
                 
                 int index = node.GetCurIndex();
 
-                children[index].Run();
-                BhResult state = children[index].GetResult();
-                index++;
-            
-                Debug.Log("子节点运行结果" + state);
+                child = children[index];
+                
+                child.Run();
+                
+                BhResult state = child.GetResult();
+                //设置当前节点运行的子对象索引
+                node.SetCurIndex(index++);
+                
+                Debug.Log("子节点" + child + "运行结果 " + state);
+
 
                 //先检测子节点运行状态对当前节点的状态是否有影响，然后检测是否完全运行完子节点
                 while (node.CheckState(state) && index < children.Count)
                 {
-                    children[index].Run();
-                    state = children[index].GetResult();
-                    index++;
-                
-                    Debug.Log("子节点运行结果" + state);
+                    child = children[index];
+                    child.Run();
+                    state = child.GetResult();
+                    //设置当前节点运行的子对象索引
+                    node.SetCurIndex(index++);
+                    Debug.Log("子节点" + child + "运行结果 " + state);
                 }
-            
-                //设置当前节点运行的子对象索引
-                node.SetCurIndex(index);
-            
+
+
                 //设置当前节点状态
                 node.SetResult(state);
             }
-            
+
             if (node.CheckStop())
             {
-                RunNode(node.GetParent(),root);
+                RunNode(node.GetParent(), root);
                 node.Reset();
+                foreach (var c in children)
+                {
+                    c.Reset();
+                }
             }
             else
             {
-                Debug.Log("没执行完");
+                Debug.Log(node + "没执行完");
                 _curNode[root] = node;
             }
         }
