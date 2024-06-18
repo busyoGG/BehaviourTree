@@ -13,7 +13,7 @@
 
         public override bool CheckStop()
         {
-            if (currentChildIndex >= children.Count || result != BhResult.Running)
+            if (currentChildIndex >= children.Count)
             {
                 return true;
             }

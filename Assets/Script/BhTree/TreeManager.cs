@@ -16,8 +16,6 @@ namespace BhTree
 
         private Dictionary<BhBaseNode, BhBaseNode> _curNode = new Dictionary<BhBaseNode, BhBaseNode>();
 
-        private Dictionary<string, object> _blackboard = new Dictionary<string, object>();
-
         /// <summary>
         /// 创建行为树
         /// </summary>
@@ -133,17 +131,6 @@ namespace BhTree
                 Debug.Log(node + "没执行完");
                 _curNode[root] = node;
             }
-        }
-
-        public void SetBlackboard(string key, object data)
-        {
-            _blackboard[key] = data;
-        }
-
-        public object GetBlackboard(string key)
-        {
-            _blackboard.TryGetValue(key, out var data);
-            return data;
         }
     }
 }

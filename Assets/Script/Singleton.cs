@@ -2,7 +2,7 @@
 public class Singleton<T> where T : new()
 {
     private static T _instance;
-    // ¶¨ÒåÒ»¸ö±êÊ¶È·±£Ïß³ÌÍ¬²½
+    // å®šä¹‰ä¸€ä¸ªæ ‡è¯†ç¡®ä¿çº¿ç¨‹åŒæ­¥
     private static readonly object locker = new object();
 
     public static T Ins()
