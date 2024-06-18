@@ -12,8 +12,6 @@ namespace BhTree
         /// </summary>
         private int _id = 0;
 
-        private Dictionary<string, BhBaseNode> _roots = new Dictionary<string, BhBaseNode>();
-
         private Dictionary<BhBaseNode, BhBaseNode> _curNode = new Dictionary<BhBaseNode, BhBaseNode>();
 
         /// <summary>
