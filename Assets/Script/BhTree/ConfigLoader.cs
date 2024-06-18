@@ -8,9 +8,9 @@ namespace BhTree
 {
     public class ConfigLoader
     {
-        public static SaveJson Load()
+        public static SaveJson Load(string path)
         {
-            string jsonData = FileUtils.ReadFile(Application.dataPath + "/Json/BHTest.json");
+            string jsonData = FileUtils.ReadFile(path);
 
             SaveJson json = JsonConvert.DeserializeObject<List<SaveJson>>(jsonData)[0];
 

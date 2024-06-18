@@ -10,7 +10,7 @@ namespace Game
         
         private void Start()
         {
-            SaveJson json = ConfigLoader.Load();
+            SaveJson json = ConfigLoader.Load(Application.dataPath + "/Json/BHTest.json");
             _root = TreeManager.Ins().InitBHNode(json);
             
             // TreeManager.Ins().Run(_root);
