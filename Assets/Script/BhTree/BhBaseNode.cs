@@ -14,7 +14,7 @@ namespace BhTree
         
         protected int currentChildIndex;
 
-        public virtual void SetResult(BhResult res)
+        public void SetResult(BhResult res)
         {
             result = res;
         }

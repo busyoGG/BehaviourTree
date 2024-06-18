@@ -2,15 +2,15 @@
 {
     public class DNodeReverse: BhBaseNode
     {
-        public override void SetResult(BhResult result)
+        public override void Run()
         {
             switch (result)
             {
                 case BhResult.Fail:
-                    base.SetResult(BhResult.Success);
+                    SetResult(BhResult.Success);
                     break;
                 case BhResult.Success:
-                    base.SetResult(BhResult.Fail);
+                    SetResult(BhResult.Fail);
                     break;
             }
         }
