@@ -1,6 +1,6 @@
 ﻿namespace BhTree
 {
-    public class DNodeReverse: BhBaseNode
+    public class DNodeInvert: BhBaseNode
     {
         public override void Run()
         {
