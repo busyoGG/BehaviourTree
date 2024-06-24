@@ -14,6 +14,12 @@ namespace BhTree
         
         protected int currentChildIndex;
 
+        /// <summary>
+        /// 是否允许中断，允许中断的情况下每次都会从第一个子节点开始检测
+        /// </summary>
+        protected bool interruptCheck = false;
+        
+
         public void SetResult(BhResult res)
         {
             result = res;
@@ -58,6 +64,15 @@ namespace BhTree
         }
 
         /// <summary>
+        /// 获取中断检测状态
+        /// </summary>
+        /// <returns></returns>
+        public bool GetInterruptCheck()
+        {
+            return interruptCheck;
+        }
+
+        /// <summary>
         /// 获取父节点
         /// </summary>
         /// <returns></returns>
@@ -94,6 +109,10 @@ namespace BhTree
         {
             currentChildIndex = 0;
             result = BhResult.Running;
+            foreach (var child in children)
+            {
+                child.Reset();
+            }
         }
     }
 }

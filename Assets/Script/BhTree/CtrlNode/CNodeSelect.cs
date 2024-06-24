@@ -2,6 +2,11 @@
 {
     public class CNodeSelect: BhBaseNode
     {
+        public override void Init(dynamic data)
+        {
+            interruptCheck = data.interrupt;
+        }
+
         public override bool CheckState(BhResult res)
         {
             if (res == BhResult.Success || res == BhResult.Running)

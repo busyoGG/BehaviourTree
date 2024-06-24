@@ -19,10 +19,11 @@ namespace BhTree
         {
             if (_defTime == -1)
             {
-                _defTime = (int)Time.time * 1000;
+                _defTime = (int)(Time.time * 1000);
             }
 
-            _curTime = (int)Time.time * 1000 - _defTime;
+            _curTime = (int)(Time.time * 1000) - _defTime;
+            // Debug.Log(_curTime);
             
             if (_curTime > _time)
             {

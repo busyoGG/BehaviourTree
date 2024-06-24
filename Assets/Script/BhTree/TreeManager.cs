@@ -52,17 +52,7 @@ namespace BhTree
 
             _curNode.TryGetValue(node, out curNode);
 
-            if (curNode == null)
-            {
-                var children = node.GetChildren();
-
-                while (children.Count > 0)
-                {
-                    node = children[0];
-                    children = node.GetChildren();
-                }
-            }
-            else
+            if (curNode != null)
             {
                 node = curNode;
             }
@@ -70,65 +60,71 @@ namespace BhTree
             RunNode(node, root);
         }
 
-        private void RunNode(BhBaseNode node, BhBaseNode root)
+        private void RunNode(BhBaseNode node, BhBaseNode root,BhBaseNode parent = null)
         {
             if (node == null)
             {
-                //一次执行完成
+                Debug.Log("一次执行结束");
                 _curNode[root] = null;
+                root.Reset();
                 return;
             }
 
+            if (node == parent)
+            {
+                return;
+            }
+            
             var children = node.GetChildren();
 
-            BhBaseNode child = null;
-            
-            if (children.Count > 0)
+            if (children.Count != 0)
             {
-                
-                int index = node.GetCurIndex();
+                bool interrupt = node.GetInterruptCheck();
+                int index = interrupt && node.GetResult() == BhResult.Running ? 0 : node.GetCurIndex();
+                BhResult res;
 
-                child = children[index];
-                
-                child.Run();
-                
-                BhResult state = child.GetResult();
-                //设置当前节点运行的子对象索引
-                node.SetCurIndex(index++);
-                
-                Debug.Log("子节点" + child + "运行结果 " + state);
-
-
-                //先检测子节点运行状态对当前节点的状态是否有影响，然后检测是否完全运行完子节点
-                while (node.CheckState(state) && index < children.Count)
+                for (int i = index; i < children.Count; i++)
                 {
-                    child = children[index];
+                    var child = children[i];
+                    RunNode(child,root,node);
+                    
                     child.Run();
-                    state = child.GetResult();
-                    //设置当前节点运行的子对象索引
-                    node.SetCurIndex(index++);
-                    Debug.Log("子节点" + child + "运行结果 " + state);
+                    res = child.GetResult();
+                    
+                    if (!node.CheckState(res) || i == children.Count - 1)
+                    {
+                        node.SetCurIndex(i);
+                        node.SetResult(res);
+                        break;
+                    }
                 }
 
-
-                //设置当前节点状态
-                node.SetResult(state);
-            }
-
-            if (node.CheckStop())
-            {
-                RunNode(node.GetParent(), root);
-                node.Reset();
-                foreach (var c in children)
+                if (node.CheckStop())
                 {
-                    c.Reset();
+                    RunNode(node.GetParent(), root,parent);
                 }
-            }
-            else
-            {
-                Debug.Log(node + "没执行完");
-                _curNode[root] = node;
+                else
+                {
+                    if (!interrupt)
+                    {
+                        _curNode[root] = node;
+                    }
+                    else
+                    {
+                        //如果当前节点可打断，向上查找到最后一个能打断的节点并存入
+                        BhBaseNode baseNode = node;
+                        BhBaseNode tempNode = null;
+                        while (baseNode.GetInterruptCheck())
+                        {
+                            tempNode = baseNode;
+                            baseNode = baseNode.GetParent();
+                        }
+                    
+                        _curNode[root] = tempNode;
+                    }
+                }
             }
         }
+
     }
 }

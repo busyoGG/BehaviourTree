@@ -167,7 +167,14 @@ namespace GraphViewExtension
             //如果设置了数据（即通过打开文件创建的节点），则把数据填充到UI
             if (_isSet)
             {
-                ResetData();
+                try
+                {
+                    ResetData();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("部分属性初始化失败" + e);
+                }
             }
 
             //初始化UI
@@ -549,7 +556,7 @@ namespace GraphViewExtension
                     }
 
                     //设置值的委托函数
-                    SetFieldDelegate setValue = 
+                    SetFieldDelegate setValue =
                         (SetFieldDelegate)Delegate.CreateDelegate(typeof(SetFieldDelegate), field, "SetValue", false);
 
                     void SetData(object o)
@@ -689,7 +696,7 @@ namespace GraphViewExtension
                                     SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
-                                
+
                                 slider.value = (int)value;
                                 num.text = value.ToString();
 
@@ -708,7 +715,7 @@ namespace GraphViewExtension
                                     SetData(evt.newValue);
                                     num.text = evt.newValue.ToString();
                                 });
-                                
+
                                 slider.value = (float)value;
                                 num.text = value.ToString();
 
@@ -743,7 +750,7 @@ namespace GraphViewExtension
                                 {
                                     radio.value = true;
                                 }
-                                
+
                                 index++;
                             }
 
